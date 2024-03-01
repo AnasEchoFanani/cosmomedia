@@ -1,0 +1,21 @@
+image: maven:3.8.4-openjdk-11
+
+pipelines:
+  default:
+    - step:
+        name: Build and Test
+        caches:
+          - maven
+        script:
+          - mvn clean install
+
+    - step:
+        name: Deploy to Server
+        deployment: production
+        script:
+          - pipe: atlassian/scp-deploy:1.1.0
+            variables:
+              USER: $SSH_USER
+              SERVER: $SSH_SERVER
+              REMOTE_PATH: "/path/to/your/app"
+              LOCAL_PATH: "target/your-app.jar"
