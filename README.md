@@ -15,7 +15,7 @@ CosmoMedia Backend is a Spring Boot application designed to serve as the backend
 - Maven
 
 ### Installation
-1. Clone the repository: `git clone https://github.com/your-username/CosmoMedia-Backend.git`
+1. Clone the repository: `git clone https://github.com/AnasEchoFanani/cosmomedia.git`
 2. Navigate to the project directory: `cd CosmoMedia-Backend`
 3. Build the project: `mvn clean install`
 4. Run the application: `mvn spring-boot:run`
