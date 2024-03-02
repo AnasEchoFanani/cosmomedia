@@ -28,7 +28,7 @@ CosmoMedia Backend is a Spring Boot application designed to serve as the backend
 - Explore the provided APIs and integrate them into the frontend dashboard.
 
 ## License
-This project is licensed under the [MIT License](LICENSE).
+This project is licensed under the [CosmoMedia Proprietary License](LICENSE).
 
 ## Contact
 For any inquiries or issues, please contact [anas.fanani.pro@gmail.com].
