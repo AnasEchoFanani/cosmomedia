@@ -1,5 +1,9 @@
-package com.app.cosmomedia.authentication;
+package com.app.cosmomedia.controller;
 
+import com.app.cosmomedia.authentication.AuthenticationRequest;
+import com.app.cosmomedia.authentication.AuthenticationResponse;
+import com.app.cosmomedia.authentication.AuthenticationService;
+import com.app.cosmomedia.authentication.RegisterRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
