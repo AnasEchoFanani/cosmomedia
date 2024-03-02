@@ -17,5 +17,5 @@ pipelines:
             variables:
               USER: $SSH_USER
               SERVER: $SSH_SERVER
-              REMOTE_PATH: "/path/to/your/app"
-              LOCAL_PATH: "target/your-app.jar"
+              REMOTE_PATH: "com.app.cosmomedia"
+              LOCAL_PATH: "target/cosmomedia.jar"
