@@ -1,6 +1,7 @@
 package com.app.cosmomedia.authentication;
 
 
+import com.app.cosmomedia.dto.UsersDTO;
 import com.app.cosmomedia.entity.Users;
 import com.app.cosmomedia.repository.UserRepository;
 import com.app.cosmomedia.security.JwtService;
@@ -37,6 +38,7 @@ public class AuthenticationService {
                 .token(jwtToken)
                 .build();
     }
+
     public AuthenticationResponse authentication(AuthenticationRequest request) {
         try {
             authenticationManager.authenticate(
@@ -53,7 +55,14 @@ public class AuthenticationService {
 
             return AuthenticationResponse.builder()
                     .token(jwtToken)
-                    .user(user)
+                    .user(UsersDTO.builder()
+                            .id(user.getID())
+                            .firstName(user.getFirstName())
+                            .lastName(user.getLastName())
+                            .email(user.getEmail())
+                            .picture(user.getPicture())
+                            .role(user.getRole())
+                            .build())
                     .build();
         } catch (AuthenticationException e) {
             // Handle authentication failure

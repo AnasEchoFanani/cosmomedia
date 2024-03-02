@@ -1,6 +1,6 @@
 package com.app.cosmomedia.authentication;
 
-import com.app.cosmomedia.entity.Users;
+import com.app.cosmomedia.dto.UsersDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AuthenticationResponse {
     private String token;
-    private Users user;
+    private UsersDTO user;
     private String error;
 }
