@@ -1,5 +1,6 @@
 package com.app.cosmomedia.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
@@ -28,6 +29,7 @@ public class Users implements UserDetails {
     private String email;
     private String password;
     private byte[] picture;
+    private String CIN;
     private String phoneNumber;
     private String info;
     private String role;
@@ -49,36 +51,43 @@ public class Users implements UserDetails {
     private String deletedBy;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
     }
 
     @Override
+    @JsonIgnore
     public String getPassword() {
         return password;
     }
 
     @Override
+    @JsonIgnore
     public String getUsername() {
         return email;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isAccountNonLocked() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
+    @JsonIgnore
     public boolean isEnabled() {
         return true;
     }
