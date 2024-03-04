@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
@@ -42,7 +43,7 @@ public class UserCRUDImp implements UserCRUD {
      * @throws MessagingException for the err
      */
     @Override
-    public String addUser(Users users) throws MessagingException {
+    public String addUser(Users users ) throws MessagingException, IOException {
         try {
             // Create MimeMessage and MimeMessageHelper for sending email
             MimeMessage mimeMessage = javaMailSender.createMimeMessage();
@@ -76,7 +77,7 @@ public class UserCRUDImp implements UserCRUD {
             return "User added successfully, and welcome message sent.";
         } catch (Exception e) {
             // Handle exceptions appropriately, log or rethrow as needed
-            throw new RuntimeException("Error adding user and sending welcome email", e);
+            throw e;
         }
     }
 

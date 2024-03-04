@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import javax.mail.MessagingException;
+import java.io.IOException;
 import java.util.Date;
 import java.util.Optional;
 
@@ -25,7 +26,7 @@ public interface UserCRUD {
      * @param usersDTO User data to create a new user.
      * @return A message indicating the success or failure of the operation.
      */
-    String addUser(Users usersDTO) throws MessagingException;
+    String addUser(Users usersDTO) throws MessagingException, IOException;
 
     /**
      * Updates an existing user.
