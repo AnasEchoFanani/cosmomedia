@@ -3,14 +3,16 @@ package com.app.cosmomedia.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 import org.hibernate.annotations.Where;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -32,28 +34,25 @@ public class Users implements UserDetails {
     private String CIN;
     private String phoneNumber;
     private String info;
+    @JsonIgnore
     private String role;
 
-    @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false, updatable = false)
     private Date createdAt;
 
-    @LastModifiedBy
     @Temporal(TemporalType.TIMESTAMP)
     private Date modifiedAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date deletedAt;
 
-    @LastModifiedBy
     @Where(clause = "deleted_at IS NOT NULL")
     private String deletedBy;
 
     @Override
-    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        return Collections.<GrantedAuthority>singletonList(new SimpleGrantedAuthority(role.toUpperCase()));
     }
 
     @Override

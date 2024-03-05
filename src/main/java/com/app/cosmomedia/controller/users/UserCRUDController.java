@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.mail.MessagingException;
@@ -28,7 +30,14 @@ public class UserCRUDController {
     }
 
     @PostMapping
-    public String addUser(@RequestBody Users users) throws MessagingException, IOException {
-        return userCRUD.addUser(users);
+    public ResponseEntity<String> addUser(@RequestBody Users users) {
+        try {
+            String result = userCRUD.addUser(users);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            // Handle exceptions appropriately, log or return an error response
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error adding user: " + e.getMessage());
+        }
     }
+
 }
