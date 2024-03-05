@@ -10,10 +10,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StreamUtils;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Date;
@@ -40,7 +42,7 @@ public class UserCRUDImp implements UserCRUD {
      *
      * @param users User data to create a new user.
      * @return Message "Success"
-     * @throws MessagingException for the err
+     * @throws MessagingException for err
      */
     @Override
     public String addUser(Users users ) throws MessagingException, IOException {
@@ -68,7 +70,10 @@ public class UserCRUDImp implements UserCRUD {
 
             // Load email content from the HTML file in the resources/static directory
             ClassPathResource resource = new ClassPathResource("static/email.html");
-            String emailContent = new String(Files.readAllBytes(resource.getFile().toPath()), StandardCharsets.UTF_8);
+            InputStream inputStream = resource.getInputStream();
+            byte[] emailContentBytes = StreamUtils.copyToByteArray(inputStream);
+            String emailContent = new String(emailContentBytes, StandardCharsets.UTF_8);
+            
             // Set the HTML content
             messageHelper.setText(emailContent, true);
 

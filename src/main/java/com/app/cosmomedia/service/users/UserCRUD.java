@@ -1,6 +1,5 @@
 package com.app.cosmomedia.service.users;
 
-import com.app.cosmomedia.dto.UsersDTO;
 import com.app.cosmomedia.entity.Users;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -8,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import javax.mail.MessagingException;
 import java.io.IOException;
 import java.util.Date;
-import java.util.Optional;
 
 public interface UserCRUD {
 
