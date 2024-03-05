@@ -18,6 +18,4 @@ public class UsersDTO {
     private String email;
     private byte[] picture;
     private String role;
-
-
 }

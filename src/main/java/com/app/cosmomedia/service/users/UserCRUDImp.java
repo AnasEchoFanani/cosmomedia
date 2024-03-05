@@ -47,39 +47,43 @@ public class UserCRUDImp implements UserCRUD {
     @Override
     public String addUser(Users users ) throws MessagingException, IOException {
         try {
-            // Create MimeMessage and MimeMessageHelper for sending email
-            MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-            MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            if (userRepository.findByEmail(users.getEmail()).isEmpty()){
+                // Create MimeMessage and MimeMessageHelper for sending email
+                MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+                MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
 
-            // Save user information to the database
-            Users user = Users.builder()
-                    .firstName(users.getFirstName())
-                    .lastName(users.getLastName())
-                    .email(users.getEmail())
-                    .picture(users.getPicture())
-                    .role(users.getRole())
-                    .createdAt(new Date())
-                    .modifiedAt(new Date())
-                    .build();
-            userRepository.save(user);
+                // Save user information to the database
+                Users user = Users.builder()
+                        .firstName(users.getFirstName())
+                        .lastName(users.getLastName())
+                        .email(users.getEmail())
+                        .picture(users.getPicture())
+                        .role(users.getRole())
+                        .createdAt(new Date())
+                        .modifiedAt(new Date())
+                        .build();
+                userRepository.save(user);
 
-            // Set email details
-            messageHelper.setFrom("anasfananibusiness@gmail.com");
-            messageHelper.setTo(user.getEmail());
-            messageHelper.setSubject("Your Sokker Login Credentials");
+                // Set email details
+                messageHelper.setFrom("anasfananibusiness@gmail.com");
+                messageHelper.setTo(user.getEmail());
+                messageHelper.setSubject("Your Sokker Login Credentials");
 
-            // Load email content from the HTML file in the resources/static directory
-            ClassPathResource resource = new ClassPathResource("static/email.html");
-            InputStream inputStream = resource.getInputStream();
-            byte[] emailContentBytes = StreamUtils.copyToByteArray(inputStream);
-            String emailContent = new String(emailContentBytes, StandardCharsets.UTF_8);
+                // Load email content from the HTML file in the resources/static directory
+                ClassPathResource resource = new ClassPathResource("static/email.html");
+                InputStream inputStream = resource.getInputStream();
+                byte[] emailContentBytes = StreamUtils.copyToByteArray(inputStream);
+                String emailContent = new String(emailContentBytes, StandardCharsets.UTF_8);
 
-            // Set the HTML content
-            messageHelper.setText(emailContent, true);
+                // Set the HTML content
+                messageHelper.setText(emailContent, true);
 
-            javaMailSender.send(mimeMessage);
+                javaMailSender.send(mimeMessage);
 
-            return "User added successfully, and welcome message sent.";
+                return "User added successfully, and welcome message sent.";
+            }else {
+                return "Email already used";
+            }
         } catch (Exception e) {
             // Handle exceptions appropriately, log or rethrow as needed
             throw e;
