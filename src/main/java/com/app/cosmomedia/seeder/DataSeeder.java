@@ -26,6 +26,7 @@ public class DataSeeder implements CommandLineRunner {
         if (usersRepository.count() == 0) {
             // Create and save three default users
             Users user1 = Users.builder()
+                    .CIN("BW4297")
                     .firstName("Anas")
                     .lastName("Fanani")
                     .email("anas.fanani.pro@gmail.com")
@@ -36,6 +37,7 @@ public class DataSeeder implements CommandLineRunner {
                     .build();
 
             Users user2 = Users.builder()
+                    .CIN("BW4258")
                     .firstName("Youssef")
                     .lastName("Salih")
                     .email("youssef-salih@cosmomedia.ma")
@@ -46,6 +48,7 @@ public class DataSeeder implements CommandLineRunner {
                     .build();
 
             Users user3 = Users.builder()
+                    .CIN("AZ4297")
                     .firstName("Najib")
                     .lastName("El Machmachi")
                     .email("najib-el-machmachi@cosmomedia.ma")

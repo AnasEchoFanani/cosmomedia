@@ -23,15 +23,15 @@ import java.util.List;
 public class Users implements UserDetails {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long ID;
+    @Column(unique = true)
+    private String CIN;
+
     private String firstName;
     private String lastName;
     @Column(unique = true)
     private String email;
     private String password;
     private byte[] picture;
-    private String CIN;
     private String phoneNumber;
     private String info;
     @JsonIgnore
