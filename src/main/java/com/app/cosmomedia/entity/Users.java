@@ -35,7 +35,6 @@ public class Users implements UserDetails {
     private String CIN;
     private String phoneNumber;
     private String info;
-    @JsonIgnore
     private String role;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -52,6 +51,7 @@ public class Users implements UserDetails {
     private String deletedBy;
 
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.<GrantedAuthority>singletonList(new SimpleGrantedAuthority(role.toUpperCase()));
     }
