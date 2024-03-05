@@ -73,7 +73,7 @@ public class UserCRUDImp implements UserCRUD {
             InputStream inputStream = resource.getInputStream();
             byte[] emailContentBytes = StreamUtils.copyToByteArray(inputStream);
             String emailContent = new String(emailContentBytes, StandardCharsets.UTF_8);
-            
+
             // Set the HTML content
             messageHelper.setText(emailContent, true);
 
