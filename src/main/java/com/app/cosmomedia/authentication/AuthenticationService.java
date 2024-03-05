@@ -56,7 +56,6 @@ public class AuthenticationService {
             return AuthenticationResponse.builder()
                     .token(jwtToken)
                     .user(UsersDTO.builder()
-                            .id(user.getID())
                             .firstName(user.getFirstName())
                             .lastName(user.getLastName())
                             .email(user.getEmail())

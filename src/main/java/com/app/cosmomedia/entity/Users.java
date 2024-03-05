@@ -22,7 +22,6 @@ public class Users implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @JsonIgnore
     private Long ID;
     private String firstName;
     private String lastName;
