@@ -121,12 +121,12 @@ public class UserCRUDController {
      * @return ResponseEntity with a success message or an error message.
      */
     @PatchMapping("/restore")
-    public ResponseEntity<String> restoreUser(@RequestParam(name = "cin", required = true) String cin) {
+    public ResponseEntity<String> restoreUser(@RequestParam String cin) {
         try {
             String result = userCRUD.restorDeleteUser(cin);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting user: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error restoring user: " + e.getMessage());
         }
     }
 
