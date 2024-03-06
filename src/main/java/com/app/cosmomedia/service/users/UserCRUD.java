@@ -18,6 +18,8 @@ public interface UserCRUD {
      */
     Page<Users> getUsersList(Pageable pageable);
 
+    Page<Users> getDeletedUsersList(Pageable pageable);
+
     /**
      * Adds a new user based on the provided UsersDTO.
      *

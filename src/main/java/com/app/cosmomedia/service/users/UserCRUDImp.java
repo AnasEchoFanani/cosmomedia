@@ -17,9 +17,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.util.Date;
 import java.util.Optional;
 
@@ -32,7 +30,6 @@ public class UserCRUDImp implements UserCRUD {
     private final UserRepository userRepository;
 
     /**
-     *
      * @param pageable Pagination information.
      * @return Users data
      */
@@ -43,14 +40,23 @@ public class UserCRUDImp implements UserCRUD {
 
     /**
      *
+     * @param pageable Pagination information.
+     * @return Deleted users data
+     */
+    @Override
+    public Page<Users> getDeletedUsersList(Pageable pageable) {
+        return userRepository.findByDeletedAtNotNullOrderByDeletedAtDesc(pageable);
+    }
+
+    /**
      * @param users User data to create a new user.
      * @return Message "Success"
      * @throws MessagingException for err
      */
     @Override
-    public String addUser(Users users ) throws MessagingException, IOException {
+    public String addUser(Users users) throws MessagingException, IOException {
         try {
-            if (userRepository.findByEmail(users.getEmail()).isEmpty()){
+            if (userRepository.findByEmail(users.getEmail()).isEmpty()) {
                 // Create MimeMessage and MimeMessageHelper for sending email
                 MimeMessage mimeMessage = javaMailSender.createMimeMessage();
                 MimeMessageHelper messageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
@@ -85,7 +91,7 @@ public class UserCRUDImp implements UserCRUD {
                 javaMailSender.send(mimeMessage);
 
                 return "User added successfully, and welcome message sent.";
-            }else {
+            } else {
                 return "Email already used";
             }
         } catch (Exception e) {
@@ -94,6 +100,10 @@ public class UserCRUDImp implements UserCRUD {
         }
     }
 
+    /**
+     * @param updatedUser The user entity with updated information.
+     * @return string
+     */
     @Override
     public String updateUser(Users updatedUser) {
         try {
@@ -117,7 +127,6 @@ public class UserCRUDImp implements UserCRUD {
                         existingUser.setPicture(updatedUser.getPicture());
                         existingUser.setCIN(updatedUser.getCIN());
                         existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
-                        existingUser.setInfo(updatedUser.getInfo());
                         existingUser.setRole(updatedUser.getRole());
 
                         // Update the modifiedAt field
@@ -126,37 +135,68 @@ public class UserCRUDImp implements UserCRUD {
                         // Save the updated user to the database
                         userRepository.save(existingUser);
 
-                        return "User updated successfully.";
+                        return "User updated successfully all.";
                     } else {
-                        // Update all fields except "email" and "role"
-                        existingUser.setFirstName(updatedUser.getFirstName());
-                        existingUser.setLastName(updatedUser.getLastName());
+                        // Update pic and phone fields
                         existingUser.setPicture(updatedUser.getPicture());
-                        existingUser.setCIN(updatedUser.getCIN());
                         existingUser.setPhoneNumber(updatedUser.getPhoneNumber());
-                        existingUser.setInfo(updatedUser.getInfo());
 
                         // Update the modifiedAt field
                         existingUser.setModifiedAt(new Date());
 
                         // Save the updated user to the database
                         userRepository.save(existingUser);
+                        return "User updated successfully except email , role and cin.";
                     }
                 } else {
                     return "Unauthorized: Only authenticated users can perform this operation.";
                 }
             } else {
                 return "User not found for the provided email.";
-            }return "";
+            }
         } catch (Exception e) {
             // Handle exceptions appropriately, log or rethrow as needed
             throw e;
         }
     }
 
+    /**
+     *
+     * @param CIN The Customer Identification Number of the user to be soft-deleted.
+     * @return String of success or err
+     */
     @Override
     public String softDeleteUser(String CIN) {
-        return null;
+        Optional<Users> existingUserOptional = userRepository.findByCIN(CIN);
+        try {
+            if (existingUserOptional.isPresent()) {
+                Users existingUser = existingUserOptional.get();
+
+                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+                // Check if the current user is an ADMIN or the owner of the account
+                if (principal instanceof Users) {
+                    Users currentUser = (Users) principal;
+
+                    // Check if the current user is an ADMIN or the owner of the account
+                    if (currentUser.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMIN"))) {
+                        existingUser.setDeletedAt(new Date());
+                        existingUser.setDeletedBy(currentUser.getFirstName() + " " + currentUser.getLastName());
+                        userRepository.save(existingUser);
+                        return "User deleted successfully";
+                    }else {
+                        return "Error in deleting the user";
+                    }
+                } else {
+                    return "Unauthorized: Only authenticated users can perform this operation.";
+                }
+            }else {
+                return "User not found";
+            }
+        } catch (Exception e){
+            throw e;
+        }
+
     }
 
     @Override

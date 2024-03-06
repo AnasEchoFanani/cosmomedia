@@ -34,7 +34,6 @@ public class Users implements UserDetails {
     @Column(unique = true)
     private String CIN;
     private String phoneNumber;
-    private String info;
     private String role;
 
     @Temporal(TemporalType.TIMESTAMP)
