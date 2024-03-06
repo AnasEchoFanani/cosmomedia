@@ -5,6 +5,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.boot.WebApplicationType;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -16,7 +17,9 @@ public class CosmomediaApplication {
     private String serverPort;
 
     public static void main(String[] args) {
-        SpringApplication.run(CosmomediaApplication.class, args);
+        SpringApplication app = new SpringApplication(CosmomediaApplication.class);
+        app.setWebApplicationType(WebApplicationType.NONE); // Disable auto close
+        app.run(args);
     }
 
     @Bean
