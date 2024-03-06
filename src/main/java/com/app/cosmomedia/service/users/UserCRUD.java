@@ -20,6 +20,8 @@ public interface UserCRUD {
 
     Page<Users> getDeletedUsersList(Pageable pageable);
 
+    Users getOneUser(String CIN);
+
     /**
      * Adds a new user based on the provided UsersDTO.
      *
@@ -44,6 +46,8 @@ public interface UserCRUD {
      */
     String softDeleteUser(String CIN);
 
+    String restorDeleteUser(String CIN);
+
     /**
      * Filters users based on specified criteria.
      *
@@ -63,6 +67,7 @@ public interface UserCRUD {
             Date endDate,
             String email,
             String role,
-            String deletedBy
+            String deletedBy,
+            Pageable pageable
     );
 }

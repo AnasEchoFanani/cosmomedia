@@ -2,10 +2,12 @@ package com.app.cosmomedia.service.users;
 
 import com.app.cosmomedia.entity.Users;
 import com.app.cosmomedia.repository.UserRepository;
+import com.app.cosmomedia.specifications.UserSpecifications;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -21,6 +23,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Optional;
 
+/**
+ * Implementation of the UserCRUD service for user management operations.
+ */
 @Service
 @RequiredArgsConstructor
 public class UserCRUDImp implements UserCRUD {
@@ -30,8 +35,10 @@ public class UserCRUDImp implements UserCRUD {
     private final UserRepository userRepository;
 
     /**
+     * Retrieves a paginated list of all active users.
+     *
      * @param pageable Pagination information.
-     * @return Users data
+     * @return Paginated list of active users.
      */
     @Override
     public Page<Users> getUsersList(Pageable pageable) {
@@ -39,9 +46,10 @@ public class UserCRUDImp implements UserCRUD {
     }
 
     /**
+     * Retrieves a paginated list of deleted users.
      *
      * @param pageable Pagination information.
-     * @return Deleted users data
+     * @return Paginated list of deleted users.
      */
     @Override
     public Page<Users> getDeletedUsersList(Pageable pageable) {
@@ -49,9 +57,25 @@ public class UserCRUDImp implements UserCRUD {
     }
 
     /**
+     * Retrieves a user by their Customer Identification Number (CIN).
+     *
+     * @param CIN The Customer Identification Number of the user.
+     * @return The user if found, otherwise throw an exception or return an indicator.
+     */
+    @Override
+    public Users getOneUser(String CIN) {
+        Optional<Users> usersOptional = userRepository.findByCIN(CIN);
+        return usersOptional.orElse(null);
+    }
+
+
+    /**
+     * Adds a new user and sends a welcome email.
+     *
      * @param users User data to create a new user.
-     * @return Message "Success"
-     * @throws MessagingException for err
+     * @return Message indicating success or failure.
+     * @throws MessagingException if an error occurs during email sending.
+     * @throws IOException        if an error occurs while reading the email template.
      */
     @Override
     public String addUser(Users users) throws MessagingException, IOException {
@@ -101,8 +125,10 @@ public class UserCRUDImp implements UserCRUD {
     }
 
     /**
+     * Updates user information based on the user's role and authentication.
+     *
      * @param updatedUser The user entity with updated information.
-     * @return string
+     * @return Message indicating success or failure.
      */
     @Override
     public String updateUser(Users updatedUser) {
@@ -161,9 +187,10 @@ public class UserCRUDImp implements UserCRUD {
     }
 
     /**
+     * Soft deletes a user based on their Customer Identification Number (CIN).
      *
      * @param CIN The Customer Identification Number of the user to be soft-deleted.
-     * @return String of success or err
+     * @return Message indicating success or failure.
      */
     @Override
     public String softDeleteUser(String CIN) {
@@ -199,9 +226,70 @@ public class UserCRUDImp implements UserCRUD {
 
     }
 
+    /**
+     * Restores a previously soft-deleted user.
+     *
+     * @param CIN The Customer Identification Number of the user to be restored.
+     * @return Message indicating success or failure.
+     */
     @Override
-    public Page<Users> filterUsers(String firstName, String lastName, Date startDate, Date endDate, String email, String role, String deletedBy) {
-        return null;
+    public String restorDeleteUser(String CIN) {
+        Optional<Users> existingUserOptional = userRepository.findByCIN(CIN);
+        try {
+            if (existingUserOptional.isPresent()) {
+                Users existingUser = existingUserOptional.get();
+
+                Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+
+                // Check if the current user is an ADMIN or the owner of the account
+                if (principal instanceof Users) {
+                    Users currentUser = (Users) principal;
+
+                    // Check if the current user is an ADMIN or the owner of the account
+                    if (currentUser.getAuthorities().stream().anyMatch(role -> role.getAuthority().equals("ADMIN"))) {
+                        existingUser.setDeletedAt(null);
+                        existingUser.setDeletedBy(null);
+                        userRepository.save(existingUser);
+                        return "User restore successfully";
+                    }else {
+                        return "Error in restoring the user";
+                    }
+                } else {
+                    return "Unauthorized: Only authenticated users can perform this operation.";
+                }
+            }else {
+                return "User not found";
+            }
+        } catch (Exception e){
+            throw e;
+        }
+
+    }
+
+    /**
+     * Filters users based on specified criteria.
+     *
+     * @param firstName  The first name of the user.
+     * @param lastName   The last name of the user.
+     * @param startDate  The start date for filtering.
+     * @param endDate    The end date for filtering.
+     * @param email      The email address of the user.
+     * @param role       The role of the user.
+     * @param deletedBy  The user who performed the deletion.
+     * @return Paginated list of users matching the specified criteria.
+     */
+    @Override
+    public Page<Users> filterUsers(String firstName, String lastName, Date startDate, Date endDate, String email, String role, String deletedBy, Pageable pageable) {
+        // Construct a specification based on the provided filter criteria
+        Specification<Users> specification = Specification.where(UserSpecifications.filterByFirstName(firstName))
+                .and(UserSpecifications.filterByLastName(lastName))
+                .and(UserSpecifications.filterByDateRange(startDate, endDate))
+                .and(UserSpecifications.filterByEmail(email))
+                .and(UserSpecifications.filterByRole(role))
+                .and(UserSpecifications.filterByDeletedBy(deletedBy));
+
+        // Use the specification to query the repository and return the paginated result
+        return userRepository.findAll(specification, pageable);
     }
 
 }
