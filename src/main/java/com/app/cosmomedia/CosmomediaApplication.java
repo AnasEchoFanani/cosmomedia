@@ -8,7 +8,6 @@ import org.springframework.context.annotation.Bean;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.util.Scanner;
 
 @SpringBootApplication
 public class CosmomediaApplication {
@@ -24,7 +23,6 @@ public class CosmomediaApplication {
     public ApplicationRunner applicationRunner() {
         return args -> {
             logServerDetails();
-            waitForExitSignal();
         };
     }
 
@@ -35,12 +33,5 @@ public class CosmomediaApplication {
         System.out.println("Server is running on:");
         System.out.println("Localhost: http://localhost:" + serverPort);
         System.out.println("Local IP Address: http://" + localIpAddress + ":" + serverPort);
-    }
-
-    private void waitForExitSignal() {
-        System.out.println("Press 'Enter' to exit...");
-        Scanner scanner = new Scanner(System.in);
-        scanner.nextLine(); // Wait for user input
-        System.exit(0); // Exit the application
     }
 }
