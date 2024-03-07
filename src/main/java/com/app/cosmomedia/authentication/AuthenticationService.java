@@ -40,6 +40,9 @@ public class AuthenticationService {
                 // User doesn't have a password, so set the password, save, and generate a token
                 user.setPassword(passwordEncoder.encode(request.getPassword()));
                 repository.save(user);
+                return AuthenticationResponse.builder()
+                        .error("Success")
+                        .build();
             } else {
                 // User already has a password, handle this case appropriately
                 return AuthenticationResponse.builder()
