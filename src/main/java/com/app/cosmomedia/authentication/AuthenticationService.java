@@ -33,7 +33,8 @@ public class AuthenticationService {
      * @return An {@link AuthenticationResponse} containing a JWT token upon successful registration or an error message otherwise.
      */
     public AuthenticationResponse register(AuthenticationPassword request) {
-        Optional<Users> usersOptional = userRepository.findByEmail(request.getEmail());
+        System.out.println(request);
+        Optional<Users> usersOptional = userRepository.findByCIN(request.getCIN());
         if (usersOptional.isPresent()) {
             Users user = usersOptional.get();
             if (user.getPassword() == null) {

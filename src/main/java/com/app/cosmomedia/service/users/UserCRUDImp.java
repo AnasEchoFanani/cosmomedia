@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Optional;
 
@@ -101,16 +102,26 @@ public class UserCRUDImp implements UserCRUD {
                 // Set email details
                 messageHelper.setFrom("anasfananibusiness@gmail.com");
                 messageHelper.setTo(user.getEmail());
-                messageHelper.setSubject("Your Sokker Login Credentials");
+                messageHelper.setSubject("Welcom To CosmoMedia");
 
                 // Load email content from the HTML file in the resources/static directory
-                ClassPathResource resource = new ClassPathResource("static/email.html");
+                ClassPathResource resource = new ClassPathResource("static/email/email.html");
                 InputStream inputStream = resource.getInputStream();
                 byte[] emailContentBytes = StreamUtils.copyToByteArray(inputStream);
                 String emailContent = new String(emailContentBytes, StandardCharsets.UTF_8);
 
+                // Replace the [NAME] placeholder with the user's last name
+                emailContent = emailContent.replace("[NAME]", user.getLastName());
+                emailContent = emailContent.replace("[link]", "https://cosmo-dashboardv2.vercel.app/confirmpassword/"+user.getCIN());
+
+                // Format the current date and replace the [time here] placeholder
+                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                String formattedDate = dateFormat.format(new Date());
+                emailContent = emailContent.replace("[time here]", formattedDate);
+
                 // Set the HTML content
                 messageHelper.setText(emailContent, true);
+                messageHelper.addInline("logoImage", new ClassPathResource("static/email/CosmoMedia carte visite.png"));
 
                 javaMailSender.send(mimeMessage);
 
@@ -211,16 +222,16 @@ public class UserCRUDImp implements UserCRUD {
                         existingUser.setDeletedBy(currentUser.getFirstName() + " " + currentUser.getLastName());
                         userRepository.save(existingUser);
                         return "User deleted successfully";
-                    }else {
+                    } else {
                         return "Error in deleting the user";
                     }
                 } else {
                     return "Unauthorized: Only authenticated users can perform this operation.";
                 }
-            }else {
+            } else {
                 return "User not found";
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
 
@@ -251,16 +262,16 @@ public class UserCRUDImp implements UserCRUD {
                         existingUser.setDeletedBy(null);
                         userRepository.save(existingUser);
                         return "User restore successfully";
-                    }else {
+                    } else {
                         return "Error in restoring the user";
                     }
                 } else {
                     return "Unauthorized: Only authenticated users can perform this operation.";
                 }
-            }else {
+            } else {
                 return "User not found";
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw e;
         }
 
@@ -269,13 +280,13 @@ public class UserCRUDImp implements UserCRUD {
     /**
      * Filters users based on specified criteria.
      *
-     * @param firstName  The first name of the user.
-     * @param lastName   The last name of the user.
-     * @param startDate  The start date for filtering.
-     * @param endDate    The end date for filtering.
-     * @param email      The email address of the user.
-     * @param role       The role of the user.
-     * @param deletedBy  The user who performed the deletion.
+     * @param firstName The first name of the user.
+     * @param lastName  The last name of the user.
+     * @param startDate The start date for filtering.
+     * @param endDate   The end date for filtering.
+     * @param email     The email address of the user.
+     * @param role      The role of the user.
+     * @param deletedBy The user who performed the deletion.
      * @return Paginated list of users matching the specified criteria.
      */
     @Override
