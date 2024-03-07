@@ -121,7 +121,6 @@ public class UserCRUDImp implements UserCRUD {
 
                 // Set the HTML content
                 messageHelper.setText(emailContent, true);
-                messageHelper.addInline("logoImage", new ClassPathResource("static/email/CosmoMedia carte visite.png"));
 
                 javaMailSender.send(mimeMessage);
 
